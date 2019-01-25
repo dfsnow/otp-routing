@@ -23,13 +23,13 @@ RUN \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /otp/ /otp/graphs && \
+RUN mkdir /resources/ /resources/graphs && \
 wget https://repo1.maven.org/maven2/org/python/jython-standalone/$JYTHON_VERSION/jython-standalone-$JYTHON_VERSION.jar \
--O /otp/jython-standalone-$JYTHON_VERSION.jar && \
-wget https://repo1.maven.org/maven2/org/opentripplanner/otp/$OTP_VERSION/otp-$OTP_VERSION-shaded.jar -O /otp/otp-$OTP_VERSION-shaded.jar
+-O /resources/jython-standalone-$JYTHON_VERSION.jar && \
+wget https://repo1.maven.org/maven2/org/opentripplanner/otp/$OTP_VERSION/otp-$OTP_VERSION-shaded.jar -O /resources/otp-$OTP_VERSION-shaded.jar
 
-COPY create_otp_matrix.py run_otp.sh /otp/
-RUN chmod +x /otp/run_otp.sh
+COPY create_otp_matrix.py run_otp.sh /resources/
+RUN chmod +x /resources/run_otp.sh
 
-CMD ["/bin/bash", "-c", "/otp/run_otp.sh"] 
+CMD ["/bin/bash", "-c", "/resources/run_otp.sh"] 
 

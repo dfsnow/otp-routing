@@ -14,14 +14,22 @@ geoid = os.environ.get('GEOID')
 working_dir = os.environ.get('WORKING_DIR')
 location_dir = os.environ.get('LOCATION_DIR')
 
+# Importing vars for OTP options
+travel_mode = os.environ.get('TRAVEL_MODE')
+max_travel_time = os.environ.get('MAX_TRAVEL_TIME')
+max_walk_dist = os.environ.get('MAX_WALK_DIST')
+
 # Setup for threading
 chunks = int(os.environ.get('CHUNKS'))
 max_threads = int(os.environ.get('MAX_THREADS'))
 
 # Setting up file imports
-origins_file = working_dir + location_dir + str(geoid) + '-origins-'
-destinations_file = working_dir + location_dir + str(geoid) + '-destinations.csv'
-output_file = working_dir + str(geoid) + '-output-'
+origins_file = working_dir + location_dir + \
+    str(geoid) + '/' + str(geoid) + '-origins-'
+destinations_file = working_dir + location_dir + \
+    str(geoid) + '/' + str(geoid) + '-destinations.csv'
+output_file = working_dir + 'output/' + \
+    str(geoid) + '/' + str(geoid) + '-output-'
 
 # Getting the datetime for the nearest Monday
 today = datetime.datetime.now()
@@ -45,9 +53,9 @@ def create_matrix(chunk):
     # Create a default request for a given departure time
     req = otp.createRequest()
     req.setDateTime(d.year, d.month, d.day, 12, 00, 00)
-    req.setMaxTimeSec(3600)         # set a limit to maximum travel time
-    req.setModes('WALK,TRANSIT')            # define transport mode
-    #req.setMaxWalkDistance(2000)    # set the maximum distance
+    req.setMaxTimeSec(max_travel_time)         # set a limit to maximum travel time
+    req.setModes(travel_mode)            # define transport mode
+    req.setMaxWalkDistance(max_walk_dist)    # set the maximum distance
 
     # CSV containing the columns GEOID, X and Y.
     origins = otp.loadCSVPopulation(origins_file + chunk + '.csv', 'Y', 'X')
@@ -80,7 +88,6 @@ def create_matrix(chunk):
     csv.save(output_file + chunk + '.csv')
 
 # Threading code
-# https://github.com/rafapereirabr/otp-travel-time-matrix/blob/master/python_script_loopHM_parallel.py
 while len(jobs) > 0:
     if threading.active_count() < max_threads + 1:
         chunk = jobs.pop()

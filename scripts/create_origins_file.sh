@@ -1,23 +1,22 @@
 #!/bin/bash
 
-GEOID=17031
-GEOMETRY='blocks'
-CHUNKS=200
-
+# Extract the required geometry centroids from DB
 psql -d network -U snow -c "\COPY (
-    SELECT geoid, ST_X(centroid) AS X, ST_Y(centroid) AS Y
+    SELECT geoid AS GEOID, ST_Y(centroid) AS Y, ST_X(centroid) AS X
     FROM $GEOMETRY
     WHERE ST_Contains((
         SELECT geom_buffer
         FROM counties
         WHERE geoid = '$GEOID'),
         centroid)
-    ) TO 'temp.csv' DELIMITER ',' CSV;"
+    ) TO './"$WORKING_DIR""$LOCATION_DIR"/$GEOID/$GEOID-origins.csv'
+    DELIMITER ',' CSV;"
 
-echo "GEOID,Y,X" > $GEOID-origins.csv
-awk -F, '{ print $1,$3,$2 }' OFS=, temp.csv >> $GEOID-origins.csv
-
+# Split the origins into different CSVs for threading
 if [ -n "$CHUNKS" ]; then
+
+    cd ./"$WORKING_DIR""$LOCATION_DIR"/$GEOID/
+
     tail -n +2 $GEOID-origins.csv > temp.csv
     rows=$(cat temp.csv | wc -l)
     ((chunk_size = ($rows + $CHUNKS - 1) / $CHUNKS))
@@ -26,7 +25,9 @@ if [ -n "$CHUNKS" ]; then
         echo "GEOID,Y,X" > $GEOID-origins-$chunk.csv
         cat x$chunk >> $GEOID-origins-$chunk.csv
     done
+
+    rm x* temp.csv
+
+    cd ../../../
 fi
 
-rm x*
-rm temp.csv
