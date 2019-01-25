@@ -9,6 +9,10 @@ psql -d network -U snow -c "\COPY (
         WHERE geoid = '$GEOID'),
         centroid)
     ) TO './"$WORKING_DIR""$LOCATION_DIR"/$GEOID/$GEOID-destinations.csv'
-    DELIMITER ',' CSV;"
+    CSV HEADER;"
+
+sed -i '1s/.*/GEOID,Y,X/' \
+    ./"$WORKING_DIR""$LOCATION_DIR"/"$GEOID"/"$GEOID"-destinations.csv
+
 
 

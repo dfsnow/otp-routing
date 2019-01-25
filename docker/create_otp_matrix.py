@@ -16,8 +16,8 @@ location_dir = os.environ.get('LOCATION_DIR')
 
 # Importing vars for OTP options
 travel_mode = os.environ.get('TRAVEL_MODE')
-max_travel_time = os.environ.get('MAX_TRAVEL_TIME')
-max_walk_dist = os.environ.get('MAX_WALK_DIST')
+max_travel_time = int(os.environ.get('MAX_TRAVEL_TIME'))
+max_walk_dist = int(os.environ.get('MAX_WALK_DIST'))
 
 # Setup for threading
 chunks = int(os.environ.get('CHUNKS'))

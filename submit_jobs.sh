@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Geometry and locations options
-GEOID_LIST=55079
+GEOID_LIST=17031
 GEOMETRY='blocks'
 
 # Chunk and threading options
@@ -23,7 +23,7 @@ for GEOID in $GEOID_LIST; do
     loc_dir="./"$WORKING_DIR""$LOCATION_DIR"/$GEOID"
     out_dir="./"$WORKING_DIR"output/$GEOID"
 
-    if [ ! -d $loc_dir ]; then mkdir $loc_dir fi
+    if [ ! -d $loc_dir ]; then mkdir $loc_dir; fi
     if [ ! -d $out_dir ]; then mkdir $out_dir; fi
 
     if [ ! -f "$loc_dir/$GEOID-origins.csv" ]; then
@@ -35,14 +35,14 @@ for GEOID in $GEOID_LIST; do
     fi
 
     docker run -it --rm \
-        -v /home/snow/otp-routing/otp/:$WORKING_DIR \
+        -v /home/snow/otp-routing/resources/:$WORKING_DIR \
         -e WORKING_DIR=$WORKING_DIR \
         -e LOCATION_DIR=$LOCATION_DIR \
         -e TRAVEL_MODE=$TRAVEL_MODE \
         -e MAX_TRAVEL_TIME=$MAX_TRAVEL_TIME \
         -e MAX_WALK_DIST=$MAX_WALK_DIST \
-        -e MAX_THREADS=$CHUNKS \
-        -e CHUNKS=$MAX_THREADS \
+        -e CHUNKS=$CHUNKS \
+        -e MAX_THREADS=$MAX_THREADS \
         -e GEOID=$GEOID \
         otp
 
