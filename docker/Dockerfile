@@ -3,6 +3,9 @@ FROM openjdk:8
 ENV OTP_VERSION 1.3.0
 ENV JYTHON_VERSION 2.7.1
 
+RUN apt-get update && \
+    apt-get install -y pbzip2
+
 RUN mkdir -p /otp/ && \
     mkdir -p /resources/graphs && \
     mkdir -p /resources/outputs

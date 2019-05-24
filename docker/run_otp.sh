@@ -2,8 +2,14 @@
 
 input_dir="/resources/graphs/"$GEOID""
 output_dir="/resources/outputs/"$GEOID""
+zipped_dir="/resources/zipped/"
 
+mkdir -p $input_dir
 mkdir -p $output_dir
+
+if [ ! -f $input_dir/$GEOID-origins.csv ]; then
+    tar -xvzf $zipped_dir/$GEOID.tar.gz --strip-components=3 -C $input_dir
+fi
 
 # Split the origins into different CSVs for threading
 tail -n +2 $input_dir/$GEOID-origins.csv > /tmp/temp.csv
@@ -37,3 +43,5 @@ rm /tmp/$GEOID-origins-*
 awk 'FNR==1 && NR!=1{next;}{print}' \
     /tmp/$GEOID-output-*.csv \
     > $output_dir/$GEOID-output-$TRAVEL_MODE.csv
+
+pbzip2 $output_dir/$GEOID-output-$TRAVEL_MODE.csv
