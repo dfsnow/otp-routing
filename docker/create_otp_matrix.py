@@ -10,12 +10,13 @@ import gc
 gc.collect()
 
 # Importing the current county and config vars
-geoid = os.environ.get('GEOID')
-working_dir = os.environ.get('WORKING_DIR')
-location_dir = os.environ.get('LOCATION_DIR')
+tmp_dir = '/tmp/'
+input_dir = '/resources/graphs/'
+output_dir = '/resources/outputs/'
 
 # Importing vars for OTP options
-travel_mode = os.environ.get('TRAVEL_MODE')
+geoid = str(os.environ.get('GEOID'))
+travel_mode = str(os.environ.get('TRAVEL_MODE'))
 max_travel_time = int(os.environ.get('MAX_TRAVEL_TIME'))
 max_walk_dist = int(os.environ.get('MAX_WALK_DIST'))
 
@@ -24,12 +25,9 @@ chunks = int(os.environ.get('CHUNKS'))
 max_threads = int(os.environ.get('MAX_THREADS'))
 
 # Setting up file imports
-origins_file = working_dir + location_dir + \
-    str(geoid) + '/' + str(geoid) + '-origins-'
-destinations_file = working_dir + location_dir + \
-    str(geoid) + '/' + str(geoid) + '-destinations.csv'
-output_file = working_dir + 'output/' + \
-    str(geoid) + '/' + str(geoid) + '-output-'
+origins_file = tmp_dir + geoid + '-origins'
+destinations_file = input_dir + geoid + '/' + geoid + '-destinations.csv'
+output_file = tmp_dir + geoid + '-output'
 
 # Getting the datetime for the nearest Monday
 today = datetime.datetime.now()
@@ -37,7 +35,7 @@ get_day = lambda date, day: date + datetime.timedelta(days=(day-date.weekday() +
 d = get_day(today, 0)
 
 # Instantiate an OtpsEntryPoint
-otp = OtpsEntryPoint.fromArgs(['--graphs', working_dir + 'graphs/', '--router', geoid])
+otp = OtpsEntryPoint.fromArgs(['--graphs', input_dir, '--router', geoid])
 
 # Start timing the code
 start_time = time.time()
@@ -58,12 +56,12 @@ def create_matrix(chunk):
     req.setMaxWalkDistance(max_walk_dist)    # set the maximum distance
 
     # CSV containing the columns GEOID, X and Y.
-    origins = otp.loadCSVPopulation(origins_file + chunk + '.csv', 'Y', 'X')
+    origins = otp.loadCSVPopulation(origins_file + '-' + chunk + '.csv', 'Y', 'X')
     destinations = otp.loadCSVPopulation(destinations_file, 'Y', 'X')
 
     # Create a CSV output
     csv = otp.createCSVOutput()
-    csv.setHeader(['origin', 'destination', 'agg_cost', 'walk_dist'])
+    csv.setHeader(['origin', 'destination', 'minutes'])
 
     # Start Loop
     for origin in origins:
@@ -80,12 +78,11 @@ def create_matrix(chunk):
             csv.addRow([
                 origin.getStringData('GEOID'),
                 r.getIndividual().getStringData('GEOID'),
-                round(r.getTime() / 60.0, 2),
-                r.getWalkDistance()
+                round(r.getTime() / 60.0, 2)
             ])
 
     # Save the result
-    csv.save(output_file + chunk + '.csv')
+    csv.save(output_file + '-' + chunk + '.csv')
 
 # Threading code
 while len(jobs) > 0:
