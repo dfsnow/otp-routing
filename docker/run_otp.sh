@@ -44,4 +44,4 @@ awk 'FNR==1 && NR!=1{next;}{print}' \
     /tmp/$GEOID-output-*.csv \
     > $output_dir/$GEOID-output-$TRAVEL_MODE.csv
 
-pbzip2 $output_dir/$GEOID-output-$TRAVEL_MODE.csv
+pbzip2 -f $output_dir/$GEOID-output-$TRAVEL_MODE.csv
