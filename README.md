@@ -6,7 +6,9 @@ This is a Docker container designed to calculate large-scale distance matrices f
 The container takes the following inputs as Docker environmental variables, all arguments are required:
 
 - GEOID (the five-digit, 2010 FIPS code for a U.S. county)
-- TRAVEL_MODE (the type of travel mode within OTP, can be 'CAR', 'TRANSIT,WALK', or 'WALK') 
+- TRAVEL_MODE (the type of travel mode within OTP, can be 'CAR', 'TRANSIT,WALK', or 'WALK', also determines which .pbf file to use) 
+- TYPE (the type of matrix to create, can be 'TRACT' or 'BLOCK')
+- OVERWRITE_GRAPH (boolean for whether or not to overwrite OTP-created Graph.obj, set to 'TRUE' when switch between travel modes)
 - MAX_TRAVEL_TIME (the maximum travel time before cutoff, in seconds) 
 - MAX_WALK_DIST (the maximum walking distance before cutoff, in meters)
 - CHUNKS (the number of chunks to divide the input file into, keep high for blocks and low for tracts)
@@ -32,7 +34,4 @@ origin,destination,minutes
 ```
 
 Each CSV is bzip'd to save space (some block matrices can be very large). Output files are saved to `/resources/outputs/$GEOID/`, and each output file is named according to its $GEOID and $TRANSIT_MODE. 
-
-### Notes
-This container can also ingest the zipped tarballs created by [otp-resources](https://github.com/dfsnow/otp-resources). If the container does not find the necessary input files in `/resources/graphs/$GEOID/`, it will look for a tarball in `/resources/zipped/` and then unzip it to the appropriate directory. 
 

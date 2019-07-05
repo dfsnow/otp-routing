@@ -1,3 +1,2 @@
-*.csv
-*.bz2
-/resources
+.gitignore
+counties.csv

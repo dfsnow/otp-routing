@@ -26,7 +26,7 @@ max_threads = int(os.environ.get('MAX_THREADS'))
 
 # Setting up file imports
 origins_file = tmp_dir + geoid + '-origins'
-destinations_file = input_dir + geoid + '/' + geoid + '-destinations.csv'
+destinations_file = tmp_dir + geoid + '-destinations.csv'
 output_file = tmp_dir + geoid + '-output'
 
 # Getting the datetime for the nearest Monday
