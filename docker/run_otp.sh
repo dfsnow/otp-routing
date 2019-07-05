@@ -8,6 +8,7 @@ mkdir -p $output_dir
 
 # Move the destinations file to tmp dir
 cat $input_dir/$GEOID-destinations-$TYPE.csv > /tmp/$GEOID-destinations.csv
+export ORIGIN_LENGTH=$(tail -n +2 $input_dir/$GEOID-origins-$TYPE.csv | wc -l)
 
 # Split the origins into different CSVs for threading
 # then move it to the tmp dir
@@ -16,8 +17,8 @@ rows=$(cat /tmp/temp.csv | wc -l)
 ((chunk_size = ($rows + $CHUNKS - 1) / $CHUNKS))
 split -a ${#CHUNKS} --numeric=1 -l $chunk_size -d /tmp/temp.csv /tmp/x
 for chunk in $(seq -f "%0${#CHUNKS}g" 1 $CHUNKS); do
+    echo "GEOID,Y,X" > /tmp/$GEOID-origins-$chunk.csv
     if [ -f /tmp/x$chunk ]; then
-        echo "GEOID,Y,X" > /tmp/$GEOID-origins-$chunk.csv
         cat /tmp/x$chunk >> /tmp/$GEOID-origins-$chunk.csv
     fi
 done

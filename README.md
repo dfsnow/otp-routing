@@ -33,5 +33,5 @@ origin,destination,minutes
 17031010100,17031010600,18.35
 ```
 
-Each CSV is bzip'd to save space (some block matrices can be very large). Output files are saved to `/resources/outputs/$GEOID/`, and each output file is named according to its $GEOID and $TRANSIT_MODE. 
+Each CSV is bzip'd to save space (some block matrices can be very large). Output files are saved to `/resources/outputs/$GEOID/`, and each output file is named according to its $GEOID, $TYPE, and $TRANSIT_MODE. 
 

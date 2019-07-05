@@ -6,6 +6,7 @@ import datetime
 import time
 import os
 import gc
+import sys
 
 gc.collect()
 
@@ -19,6 +20,7 @@ geoid = str(os.environ.get('GEOID'))
 travel_mode = str(os.environ.get('TRAVEL_MODE'))
 max_travel_time = int(os.environ.get('MAX_TRAVEL_TIME'))
 max_walk_dist = int(os.environ.get('MAX_WALK_DIST'))
+origin_length = int(os.environ.get('ORIGIN_LENGTH'))
 
 # Setup for threading
 chunks = int(os.environ.get('CHUNKS'))
@@ -45,6 +47,7 @@ router = otp.getRouter(geoid)
 
 # Create a list of jobs if using chunking
 jobs = [str(chunk).zfill(len(str(chunks))) for chunk in range(1, chunks + 1)]
+i = 0
 
 def create_matrix(chunk):
 
@@ -63,9 +66,21 @@ def create_matrix(chunk):
     csv = otp.createCSVOutput()
     csv.setHeader(['origin', 'destination', 'minutes'])
 
-    # Start Loop
-    for origin in origins:
-        print "Now Processing: ", origin.getStringData('GEOID')
+    # Start loop
+    for idx, origin in enumerate(origins):
+
+        # Create a hacky progress bar
+        global i
+        i += 1
+        pg_pct = str(round(float(i) / origin_length, 2))
+
+        # Progress bar text and return
+        pg_str = "GEOID: {} - ORIGIN {}/{} [{}%]    \r".format(
+            geoid, str(i), str(origin_length), pg_pct)
+        sys.stdout.write(pg_str)
+        sys.stdout.flush()
+
+        # Create router for each origin
         req.setOrigin(origin)
         spt = router.plan(req)
         if spt is None: continue
