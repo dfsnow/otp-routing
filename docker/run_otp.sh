@@ -23,7 +23,7 @@ for chunk in $(seq -f "%0${#CHUNKS}g" 1 $CHUNKS); do
     fi
 done
 
-rm /tmp/x* /tmp/temp.csv
+rm -f /tmp/x* /tmp/temp.csv
 
 # Creating symlink to the proper pbf file inside the input directory
 if [ $TRAVEL_MODE = 'CAR' ]; then
@@ -45,7 +45,7 @@ if [ $OVERWRITE_GRAPH = 'TRUE' ]; then
 fi
 
 # Remove symlink and build-config after graph creation
-rm $input_dir/$GEOID.pbf $input_dir/build-config.json
+rm -f $input_dir/$GEOID.pbf $input_dir/build-config.json
 
 # Create the OTP matrix
 java -Xmx24G \
