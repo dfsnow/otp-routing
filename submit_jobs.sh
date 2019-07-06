@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Example loop for running jobs
-#for GEOID in $(cat counties.csv); do
-for GEOID in 17031; do
+for GEOID in $(cat counties.csv); do
+
     docker run -it --rm \
         -v /home/"$USER"/resources/graphs/:/resources/graphs/ \
         -v /home/"$USER"/resources/outputs/:/resources/outputs/ \
@@ -14,6 +14,6 @@ for GEOID in 17031; do
         -e CHUNKS=100 \
         -e MAX_THREADS=12 \
         -e GEOID="$GEOID" \
-        otp-routing
+        snowdfs/otp-routing
 
 done
