@@ -47,7 +47,7 @@ while [ $(cat $remaining_file | wc -l) ]; do
     echo "Now running GEOID: $GEOID"
 
     # Run job
-    docker run -d --rm \
+    docker run --rm \
         -v $GRAPHS_DIR:/resources/graphs/ \
         -v $OUTPUTS_DIR:/resources/outputs/ \
         -e TRAVEL_MODE=$TRAVEL_MODE \
