@@ -114,4 +114,4 @@ while threading.active_count() > 1:
 print("\nAll jobs completed!"
 
 # Stop timing the code
-print("Elapsed time was {} seconds.".format(time.time() - start_time))
+print("Elapsed time was {} seconds.".format(str(time.time() - start_time)))
