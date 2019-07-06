@@ -7,7 +7,7 @@ GRAPHS_DIR=/home/$USER/resources/graphs/
 OUTPUTS_DIR=/home/$USER/resources/outputs/
 
 # Set env variables for running jobs
-TRAVEL_MODE='WALK'      # possible travel modes: WALK, TRANSIT, or CAR
+TRAVEL_MODE='CAR'      # possible travel modes: WALK, TRANSIT, or CAR
 TYPE='TRACT'            # possible matrix types: BLOCK or TRACT
 OVERWRITE_GRAPH='TRUE'  # overwrite previous OTP Graph.obj: TRUE or FALSE
 MAX_TRAVEL_TIME=7200    # maximum travel time before stopping routing (seconds)
@@ -20,22 +20,20 @@ MAX_CONTAINERS=2        # max number of containers to run simultaneously
 ###### SUBMIT JOBS ######
 
 # Create a filename for remaining jobs
-remaining_file=$TYPE-$TRAVEL_MODE-remaining.txt
+remaining_file=/tmp/$TYPE-$TRAVEL_MODE-remaining.txt
 
 # Get jobs remaining by comparing full county list to output files
 # Write remaining jobs to random remaining.txt file
-if [ ! -f $remaining_file ]; then
-    finished=$(find $OUTPUTS_DIR \
-        -iname "*$TYPE*-$TRAVEL_MODE*" \
-        -printf "%f\n" \
-        | grep -Eo '[[:digit:]]{5,}' \
-        | sort)
+finished=$(find $OUTPUTS_DIR \
+    -iname "*$TYPE*-$TRAVEL_MODE*" \
+    -printf "%f\n" \
+    | grep -Eo '[[:digit:]]{5,}' \
+    | sort)
 
-    comm -13 \
-        <(echo $finished ) \
-        <(ls $GRAPHS_DIR | sort) \
-        > $remaining_file
-fi
+comm -13 \
+    <(echo $finished ) \
+    <(ls $GRAPHS_DIR | sort) \
+    > $remaining_file
 
 echo "For TYPE = $TYPE and TRAVEL_MODE = $TRAVEL_MODE"
 echo "There are $(cat $remaining_file | wc -l) counties remaining"

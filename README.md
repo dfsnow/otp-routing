@@ -16,7 +16,7 @@ The container takes the following inputs as Docker environmental variables, all 
 
 Each OTP matrix calculation requires 4 input files: a PBF of the relevant area, a CSV of origin locations, a CSV of destination locations, and zip file of any GTFS feeds in the buffered county.
 
-The container will look for these input files in `/resources/graphs/$GEOID`. It will ingest the files exactly as they are outputted by [otp-resources](https://github.com/dfsnow/otp-resources), simply mount the same `/resources/graphs/` for both containers. An example of this setup is provided in `submit_jobs.sh`.
+The container will look for these input files in `/resources/graphs/$GEOID`. It will ingest the files exactly as they are outputted by [otp-resources](https://github.com/dfsnow/otp-resources), simply mount the same `/resources/graphs/` for both containers. An example of this setup is provided in `submit_jobs_simple.sh`.
 
 ### Outputs
 This container outputs a CSV distance matrix that is n * m long and 3 wide, where n is the number of origins and m is the number of destinations. Sample output:
