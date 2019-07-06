@@ -14,7 +14,7 @@ MAX_TRAVEL_TIME=7200    # maximum travel time before stopping routing (seconds)
 MAX_WALK_DIST=3000      # maximum walking distance before stopping (meters)
 CHUNKS=100              # number of chunks to split computation across
 MAX_THREADS=8           # max number of threads to compute on
-MAX_CONTAINERS=4        # max number of containers to run simultaneously
+MAX_CONTAINERS=2        # max number of containers to run simultaneously
 
 
 ###### SUBMIT JOBS ######
@@ -33,7 +33,7 @@ if [ ! -f $remaining_file ]; then
 
     comm -13 \
         <(echo $finished ) \
-        <(cat counties.csv | sort) \
+        <(ls $GRAPHS_DIR | sort) \
         > $remaining_file
 fi
 
