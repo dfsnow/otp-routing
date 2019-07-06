@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker run -it --rm \
+docker run --rm \
     -v /home/$USER/resources/graphs/:/resources/graphs/ \
     -v /home/$USER/resources/outputs/:/resources/outputs/ \
     -e TRAVEL_MODE='CAR' \
