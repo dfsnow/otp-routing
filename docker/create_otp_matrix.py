@@ -67,15 +67,15 @@ def create_matrix(chunk):
     csv.setHeader(['origin', 'destination', 'minutes'])
 
     # Start loop
-    for idx, origin in enumerate(origins):
+    for origin in origins:
 
         # Create a hacky progress bar
         global i
         i += 1
-        pg_pct = str(round(float(i) / origin_length, 2))
+        pg_pct = str(round((float(i) / origin_length) * 100, 2))
 
         # Progress bar text and return
-        pg_str = "GEOID: {} - ORIGIN {}/{} [{}%]    \r".format(
+        pg_str = "Processing GEOID: {} - ORIGIN {}/{} [{}%]    \r".format(
             geoid, str(i), str(origin_length), pg_pct)
         sys.stdout.write(pg_str)
         sys.stdout.flush()
@@ -111,7 +111,7 @@ while len(jobs) > 0:
 while threading.active_count() > 1:
     sleep(0.1)
 
-print 'All jobs completed!'
+print("\nAll jobs completed!"
 
 # Stop timing the code
-print("Elapsed time was %g seconds." % (time.time() - start_time))
+print("Elapsed time was {} seconds.".format(time.time() - start_time))
