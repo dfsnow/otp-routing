@@ -50,3 +50,11 @@ If you need to run this container but don't have the root privileges necessary t
 xargs -a blacklist.csv -I filename find ~/resources/graphs/ -name filename -delete
 ```
 
+### Extracting a Subset of Tracts or Blocks
+
+You can use the example `extract_from_bzip.sh` script to extract a smaller segment of a larger file. The script is a quick one-liner that uses awk to match the GEOIDs specified in a filename of your choice. For example, the following code would extract the tracts specified in `list_of_geoids.csv` from the file `36061-output-TRACT-CAR.csv.bz2`.
+
+```
+bzcat 36061-output-TRACT-CAR.csv.bz2 awk -F',' "$(for x in $(cat list_of_geoids.csv); do printf "\$1 == \"$x\" || "; done | rev | cut -c 4- | rev)"
+```
+
