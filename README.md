@@ -41,3 +41,12 @@ If you need to run this container but don't have the root privileges necessary t
 
 1. Alias `docker` to the udocker executable
 2. Manually create the directories that you plan to store resources in (udocker seems to have trouble creating new directories on the host)
+
+### Deleting Bad GTFS Feeds
+
+`blacklist.csv` is a list of GTFS feeds that are improperly formatted and thus break OTP. You can delete them from every folder in the graphs directory by using `find`, e.g.
+
+```
+xargs -a blacklist.csv -I filename find ~/resources/graphs/ -name filename -delete
+```
+
