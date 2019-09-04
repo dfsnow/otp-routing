@@ -8,32 +8,34 @@ OUTPUTS_DIR=/home/$USER/resources/outputs/
 
 # Set env variables for running jobs
 TRAVEL_MODE='WALK'      # possible travel modes: WALK, TRANSIT, or CAR
-TYPE='TRACT'            # possible matrix types: BLOCK or TRACT
+TYPE='BLOCK'            # possible matrix types: BLOCK or TRACT
 OVERWRITE_GRAPH='TRUE'  # overwrite previous OTP Graph.obj: TRUE or FALSE
-MAX_TRAVEL_TIME=7200    # maximum travel time before stopping routing (seconds)
-MAX_WALK_DIST=3000      # maximum walking distance before stopping (meters)
-CHUNKS=100              # number of chunks to split computation across
+MAX_TRAVEL_TIME=5400    # maximum travel time before stopping routing (seconds)
+MAX_WALK_DIST=5000      # maximum walking distance before stopping (meters)
+CHUNKS=1000             # number of chunks to split computation across
 MAX_THREADS=4           # max number of threads to compute on
-MAX_CONTAINERS=20        # max number of containers to run simultaneously
+MAX_CONTAINERS=8        # max number of containers to run simultaneously
 
 
 ###### SUBMIT JOBS ######
 
 # Create a filename for remaining jobs
+finished_file=/tmp/$TYPE-$TRAVEL_MODE-finished.txt
 remaining_file=/tmp/$TYPE-$TRAVEL_MODE-remaining.txt
 
 # Get jobs remaining by comparing full county list to output files
 # Write remaining jobs to random remaining.txt file
 if [ ! -f $remaining_file ]; then
 
-finished=$(find $OUTPUTS_DIR \
+find $OUTPUTS_DIR \
     -iname "*$TYPE*-$TRAVEL_MODE*" \
     -printf "%f\n" \
     | grep -Eo '[[:digit:]]{5,}' \
-    | sort)
+    | sort \
+    > $finished_file
 
 comm -13 \
-    <(echo $finished ) \
+    <(cat $finished_file ) \
     <(ls $GRAPHS_DIR | sort) \
     > $remaining_file
 
@@ -50,6 +52,9 @@ while [ $(cat $remaining_file | wc -l) ]; do
     GEOID=$(awk '/./{line=$0} END{print line}' $remaining_file)
     echo "Now running GEOID: $GEOID"
 
+    # Remove last line of remaining.txt file
+    sed -i '$ d' $remaining_file
+
     # Run job
     docker run --rm \
         -v $GRAPHS_DIR:/resources/graphs/ \
@@ -63,9 +68,6 @@ while [ $(cat $remaining_file | wc -l) ]; do
         -e MAX_THREADS=$MAX_THREADS \
         -e GEOID="$GEOID" \
         snowdfs/otp-routing
-
-    # Remove last line of remaining.txt file
-    sed -i '$ d' $remaining_file
 
     done
 done
